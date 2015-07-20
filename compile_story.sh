@@ -1,6 +1,5 @@
 #!/usr/bin/env bash
 
-#BASE_OUTPUT_DIR="${HOME}/Dropbox/Skrivande"
 BASE_OUTPUT_DIR="$1"
 DRAFT_DIR="$2"
 
@@ -8,12 +7,9 @@ function realpath() {
   echo "$(cd "$(dirname "$1")" && pwd)/$(basename "$1")"
 }
 
-#CSS="${HOME}/Dropbox/scripts/style/manuscript.css"
-CSS=$(realpath "style/manuscript.css")
-#DOCXREF="${HOME}/Dropbox/scripts/style/reference.docx"
-DOCXREF=$(realpath "style/reference.docx")
-#ODTREF="${HOME}/Dropbox/scripts/style/reference.odt"
-ODTREF=$(realpath "style/reference.odt")
+CSS=$(realpath `dirname "$0"`"/style/manuscript.css")
+DOCXREF=$(realpath `dirname "$0"`"/style/reference.docx")
+ODTREF=$(realpath `dirname "$0"`"/style/reference.odt")
 
 CHAPTER_LEVEL="###"
 SCENE_LEVEL="####"
@@ -24,7 +20,6 @@ WKHTML2PDF="wkhtmltopdf"
 # I needed to wrap wkhtmltopdf in a script calling it with xvfb-run when on a headless linux box
 WKHTML2PDF="wkhtml2pdf.sh"
 
-#METADATAFILE=`dirname "$1"`"/../metadata.md"
 METADATAFILE="${DRAFT_DIR}/../metadata.md"
 
 # Get parameters from metadata file
