@@ -123,6 +123,8 @@ else
     # If not left to the compiler, replace all quotes in the master markdown file with typographic quotes.
     sed -i.sed 's/\"/\”/g' "$OUTPUT_FILE" && rm "${OUTPUT_FILE}.sed"
 fi
+# Replace double quotes with en-dash
+sed -i.sed 's/ -- / – /g' "$OUTPUT_FILE" && rm "${OUTPUT_FILE}.sed"
 
 echo "Creating HTML"
 $PANDOC $smart -s -t html -c $CSS -o "${OUTPUT_DIR}/${short_title}.html" "${OUTPUT_DIR}/${short_title}.md"
