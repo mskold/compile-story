@@ -22,7 +22,7 @@ SCENE_DIVIDER="· · ·"
 PANDOC="pandoc"
 WKHTML2PDF="wkhtmltopdf"
 # I needed to wrap wkhtmltopdf in a script calling it with xvfb-run when on a headless linux box
-#WKHTML2PDF="wkhtml2pdf.sh"
+WKHTML2PDF="wkhtml2pdf.sh"
 
 #METADATAFILE=`dirname "$1"`"/../metadata.md"
 METADATAFILE="${DRAFT_DIR}/../metadata.md"
