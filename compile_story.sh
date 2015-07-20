@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 
-BASE_OUTPUT_DIR="${HOME}/Dropbox/Skrivande"
+#BASE_OUTPUT_DIR="${HOME}/Dropbox/Skrivande"
+BASE_OUTPUT_DIR="$1"
+DRAFT_DIR="$2"
 
 function realpath() {
   echo "$(cd "$(dirname "$1")" && pwd)/$(basename "$1")"
@@ -18,11 +20,12 @@ SCENE_LEVEL="####"
 SCENE_DIVIDER="· · ·"
 
 PANDOC="pandoc"
-#WKHTML2PDF="wkhtmltopdf"
+WKHTML2PDF="wkhtmltopdf"
 # I needed to wrap wkhtmltopdf in a script calling it with xvfb-run when on a headless linux box
-WKHTML2PDF="wkhtml2pdf.sh"
+#WKHTML2PDF="wkhtml2pdf.sh"
 
-METADATAFILE=`dirname "$1"`"/../metadata.md"
+#METADATAFILE=`dirname "$1"`"/../metadata.md"
+METADATAFILE="${DRAFT_DIR}/../metadata.md"
 
 # Get parameters from metadata file
 title=`grep "^Title: " "${METADATAFILE}" |awk -F ': ' '{print $2}'`
@@ -114,7 +117,7 @@ function concat_story() {
 # Concatenate all markdown files into the master markdown file.
 # (Folders are treated as chapters, with the directory name (from position 3) as the chapter name (with heading level 3).
 # Individual markdown files in each directory are concatenated with a · as separator (with heading level 4)
-concat_story "$@"
+concat_story "${DRAFT_DIR}"/*
 
 # The "smart"-flag causes quotes to be created with english style (i.e. inverted starting quote)
 smart=""
