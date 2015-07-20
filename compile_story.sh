@@ -58,11 +58,11 @@ epub_chapter_level=""
 # Set and create output directory
 if [ "$storytype" == "Novel" ];
 then
-    OUTPUT_DIR="${BASE_OUTPUT_DIR}/Romaner/$(date +%Y)/${short_title}/$(date +%Y%m%d)"
+    OUTPUT_DIR="${BASE_OUTPUT_DIR}/Romaner/$(date +%Y)/${title}/$(date +%Y%m%d)"
     # This causes pandoc to force a page break for each chapter, and isn't necessary in a short story
     epub_chapter_level="--epub-chapter-level=3"
 else
-    OUTPUT_DIR="${BASE_OUTPUT_DIR}/Noveller/$(date +%Y)/${short_title}/$(date +%Y%m%d)"
+    OUTPUT_DIR="${BASE_OUTPUT_DIR}/Noveller/$(date +%Y)/${title}/$(date +%Y%m%d)"
 fi
 
 mkdir -p "$OUTPUT_DIR"
@@ -123,7 +123,7 @@ else
     # If not left to the compiler, replace all quotes in the master markdown file with typographic quotes.
     sed -i.sed 's/\"/\”/g' "$OUTPUT_FILE" && rm "${OUTPUT_FILE}.sed"
 fi
-# Replace double quotes with en-dash
+# Replace double dash with en-dash
 sed -i.sed 's/ -- / – /g' "$OUTPUT_FILE" && rm "${OUTPUT_FILE}.sed"
 
 echo "Creating HTML"
