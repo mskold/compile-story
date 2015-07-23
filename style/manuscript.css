@@ -17,11 +17,11 @@ p
 
 h1
 {
-    font-size: 15pt;
+    font-size: 16pt;
 }
 h2
 {
-    font-size: 13pt;
+    font-size: 12pt;
 }
 h1, h2
 {
@@ -29,12 +29,18 @@ h1, h2
 	text-indent:0;
 	margin-top:0;
 }
+h2 {
+    margin-bottom: 3em;
+}
 h3
 {
 	text-align:center;
 	text-indent:0;
 	margin-top:0;
     page-break-before: always;
+}
+.author:before {
+  content: "av ";
 }
 
 A:link
