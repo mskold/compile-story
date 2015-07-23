@@ -3,6 +3,11 @@
 BASE_OUTPUT_DIR="$1"
 DRAFT_DIR="$2"
 
+if [ ! -d "$DRAFT_DIR" ]; then
+    echo "Draft directory \"${DRAFT_DIR}\" does not exist."
+    exit 1
+fi
+
 function realpath() {
   echo "$(cd "$(dirname "$1")" && pwd)/$(basename "$1")"
 }
@@ -22,18 +27,23 @@ WKHTML2PDF="wkhtml2pdf.sh"
 
 METADATAFILE="${DRAFT_DIR}/../metadata.md"
 
+if [ ! -f "${METADATAFILE}" ]; then
+    echo "Metadatafile ${METADATAFILE} does not exist."
+    exit 1
+fi
+
 # Get parameters from metadata file
-title=`grep "^Title: " "${METADATAFILE}" |awk -F ': ' '{print $2}'`
-revision=`grep "^Revision: " "${METADATAFILE}" |awk -F ': ' '{print $2}'`
-short_title=`grep "^ShortTitle: " "${METADATAFILE}" |awk -F ': ' '{print $2}'`
-author=`grep "^Author: " "${METADATAFILE}" |awk -F ': ' '{print $2}'`
-series=`grep "^Series: " "${METADATAFILE}" |awk -F ': ' '{print $2}'`
-series_index=`grep "^SeriesIndex: " "${METADATAFILE}" |awk -F ': ' '{print $2}'`
-tags=`grep "^Tags: " "${METADATAFILE}" |awk -F ': ' '{print $2}'`
-cover=`grep "^Cover: " "${METADATAFILE}" |awk -F ': ' '{print $2}'`
-language=`grep "^Language: " "${METADATAFILE}" |awk -F ': ' '{print $2}'`
-storytype=`grep "^StoryType: " "${METADATAFILE}" |awk -F ': ' '{print $2}'`
-draftlevel=`grep "^DraftLevel: " "${METADATAFILE}" |awk -F ': ' '{print $2}'`
+title=`grep -i "^Title: " "${METADATAFILE}" |awk -F ': ' '{print $2}'`
+revision=`grep -i "^Revision: " "${METADATAFILE}" |awk -F ': ' '{print $2}'`
+short_title=`grep -i "^ShortTitle: " "${METADATAFILE}" |awk -F ': ' '{print $2}'`
+author=`grep -i "^Author: " "${METADATAFILE}" |awk -F ': ' '{print $2}'`
+series=`grep -i "^Series: " "${METADATAFILE}" |awk -F ': ' '{print $2}'`
+series_index=`grep -i "^SeriesIndex: " "${METADATAFILE}" |awk -F ': ' '{print $2}'`
+tags=`grep -i "^Tags: " "${METADATAFILE}" |awk -F ': ' '{print $2}'`
+cover=`grep -i "^Cover: " "${METADATAFILE}" |awk -F ': ' '{print $2}'`
+language=`grep -i "^Language: " "${METADATAFILE}" |awk -F ': ' '{print $2}'`
+storytype=`grep -i "^StoryType: " "${METADATAFILE}" |awk -F ': ' '{print $2}'`
+draftlevel=`grep -i "^DraftLevel: " "${METADATAFILE}" |awk -F ': ' '{print $2}'`
 
 # Short title can be used if I want to control the final file name. Otherwise, just use $title.
 if [ "$short_title" == "" ]; then
@@ -96,7 +106,7 @@ function concat_story() {
                 echo "" >> "$OUTPUT_FILE"
             fi
             if [ "$first" == "false" ];then
-                echo "Inserting divider · between scenes."
+                echo "Inserting divider between scenes."
                 echo "" >> "$OUTPUT_FILE"
                 echo "" >> "$OUTPUT_FILE"
                 echo "${SCENE_LEVEL} ${SCENE_DIVIDER}" >> "$OUTPUT_FILE"
