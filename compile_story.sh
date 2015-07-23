@@ -125,6 +125,8 @@ else
 fi
 # Replace double dash with en-dash
 sed -i.sed 's/ -- / – /g' "$OUTPUT_FILE" && rm "${OUTPUT_FILE}.sed"
+# Remove trailing whitespace (yes, i think the "double space linebreak" is an abomination in markdown).
+sed -i.sed 's/[ ]*$//' "$OUTPUT_FILE" && rm "${OUTPUT_FILE}.sed"
 
 echo "Creating HTML"
 $PANDOC $smart -s -t html -c $CSS -o "${OUTPUT_DIR}/${short_title}.html" "${OUTPUT_DIR}/${short_title}.md"
