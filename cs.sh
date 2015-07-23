@@ -4,7 +4,7 @@
 PATH_NOVELL="${HOME}/Dropbox/_text/_noveller"
 PATH_ROMAN="${HOME}/Dropox/_text"
 DRAFT_DIR="draft"
-OUTPUT_PATH="${HOME}/Dropbox/Skrivande"
+OUTPUT_PATH="${HOME}/Dropbox/_text/_output"
 
 STORY_PATH=$PATH_NOVELL
 
