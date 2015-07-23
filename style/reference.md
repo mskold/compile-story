@@ -1,5 +1,13 @@
-# Referensdokument
-## av Markus Sköld
+---
+title: Referensdokument
+author: Markus Sköld
+date: 2015-07-23
+tags: example
+language: swedish
+---
+
+# Annan modell för titel
+## Annan modell för författare
 
 Första paragrafen. Texten flyter på med korrekt radavstånd inom paragrafen, även i förhållande till andra paragrafer.
 
