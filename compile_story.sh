@@ -142,7 +142,7 @@ echo "Creating HTML"
 $PANDOC $smart -s -t html -c $CSS -o "${OUTPUT_DIR}/${short_title}.html" "${OUTPUT_DIR}/${short_title}.md"
 
 echo "Compiling PDF"
-$WKHTML2PDF --margin-top 20 --margin-right 30 --margin-left 30 --page-size A4 --encoding utf-8 --footer-font-name "Times New Roman" --header-font-name "Times New Roman" --header-font-size 9 --header-right "$title / $author" --footer-center "[page]" "${OUTPUT_DIR}/${short_title}.html" "${OUTPUT_DIR}/${short_title}.pdf"
+$WKHTML2PDF --margin-top 20 --margin-bottom 20 --margin-right 30 --margin-left 30 --page-size A4 --encoding utf-8 --footer-font-name "Times New Roman" --footer-spacing 10 --header-font-name "Times New Roman" --header-font-size 9 --header-spacing 10 --header-right "$title / $author" --footer-center "[page]" "${OUTPUT_DIR}/${short_title}.html" "${OUTPUT_DIR}/${short_title}.pdf"
 
 #echo "Compiling MOBI"
 #$EBOOKCONVERT "${OUTPUT_DIR}/${short_title}.html" "${OUTPUT_DIR}/$short_title.mobi" --authors="$author" --series="$series" --series-index=$series_index --title="$title" --tags="$tags" --output-profile=kindle
