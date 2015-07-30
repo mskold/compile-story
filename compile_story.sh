@@ -23,9 +23,16 @@ SCENE_DIVIDER="· · ·"
 PANDOC="pandoc"
 WKHTML2PDF="wkhtmltopdf"
 # I needed to wrap wkhtmltopdf in a script calling it with xvfb-run when on a headless linux box
-WKHTML2PDF="wkhtml2pdf.sh"
+#WKHTML2PDF="wkhtml2pdf.sh"
 
-METADATAFILE="${DRAFT_DIR}/../metadata.md"
+METADATAFILE="${DRAFT_DIR}/00-metadata.md"
+metadataoutsidedraft="false"
+
+if [ ! -f "${METADATAFILE}" ]; then
+    echo "Metadatafile ${METADATAFILE} not found in ${DRAFT_DIR}."
+    metadataoutsidedraft="true"
+    METADATAFILE="${DRAFT_DIR}/../metadata.md"
+fi
 
 if [ ! -f "${METADATAFILE}" ]; then
     echo "Metadatafile ${METADATAFILE} does not exist."
@@ -79,13 +86,15 @@ mkdir -p "$OUTPUT_DIR"
 
 OUTPUT_FILE="${OUTPUT_DIR}/${short_title}.md"
 
-# Append metadata.md as YAML section in master markdown file
-# (This enables pandoc to add metadata to generated documents, such as Author and Title)
-echo "---" > "$OUTPUT_FILE"
-cat "${METADATAFILE}" >> "$OUTPUT_FILE"
-echo "" >> "$OUTPUT_FILE"
-echo "---" >> "$OUTPUT_FILE"
-echo "" >> "$OUTPUT_FILE"
+if [ $metadataoutsidedraft == "true" ]; then
+    # Append metadata.md as YAML section in master markdown file
+    # (This enables pandoc to add metadata to generated documents, such as Author and Title)
+    echo "---" > "$OUTPUT_FILE"
+    cat "${METADATAFILE}" >> "$OUTPUT_FILE"
+    echo "" >> "$OUTPUT_FILE"
+    echo "---" >> "$OUTPUT_FILE"
+    echo "" >> "$OUTPUT_FILE"
+fi
 
 function concat_story() {
     first="true"
@@ -112,9 +121,21 @@ function concat_story() {
                 echo "${SCENE_LEVEL} ${SCENE_DIVIDER}" >> "$OUTPUT_FILE"
                 echo "" >> "$OUTPUT_FILE"
             fi
-            echo "Concatenating storyfile ${file} to output ... "
-            cat "$file" >> "$OUTPUT_FILE"
             first="false"
+            if [ "$(basename "$file")" == "00-metadata.md" ];then
+                echo "Inserting metadata ${file} into output ... "
+                first="true"
+                # Append metadata.md as YAML section in master markdown file
+                # (This enables pandoc to add metadata to generated documents, such as Author and Title)
+                echo "---" > "$OUTPUT_FILE"
+                cat "$file" >> "$OUTPUT_FILE"
+                echo "" >> "$OUTPUT_FILE"
+                echo "---" >> "$OUTPUT_FILE"
+                echo "" >> "$OUTPUT_FILE"
+            else
+                echo "Concatenating storyfile ${file} to output ... "
+                cat "$file" >> "$OUTPUT_FILE"
+            fi
         fi
     done
 }
@@ -124,9 +145,8 @@ function concat_story() {
 # Individual markdown files in each directory are concatenated with a · as separator (with heading level 4)
 concat_story "${DRAFT_DIR}"/*
 
-# The "smart"-flag causes quotes to be created with english style (i.e. inverted starting quote)
 smart=""
-
+# The "smart"-flag causes quotes to be created with english style (i.e. inverted starting quote)
 if [ "$language" == "english" ]; then
     smart="--smart"
 else
