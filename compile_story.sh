@@ -73,14 +73,16 @@ fi
 epub_chapter_level=""
 
 # Set and create output directory
-if [ "$storytype" == "Novel" ];
-then
+if [ "$storytype" == "Novel" ]; then
     OUTPUT_DIR="${BASE_OUTPUT_DIR}/Romaner/$(date +%Y)/${title}/$(date +%Y%m%d)"
     # This causes pandoc to force a page break for each chapter, and isn't necessary in a short story
     epub_chapter_level="--epub-chapter-level=3"
 else
     OUTPUT_DIR="${BASE_OUTPUT_DIR}/Noveller/$(date +%Y)/${title}/$(date +%Y%m%d)"
 fi
+
+# For now, just use base output dir. No fancy business.
+OUTPUT_DIR=$BASE_OUTPUT_DIR
 
 mkdir -p "$OUTPUT_DIR"
 
