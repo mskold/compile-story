@@ -10,8 +10,10 @@ export PYTHONIOENCODING="UTF-8"
 rm -fr "$DRAFT_PATH"
 rm -fr "$OUTPUT_PATH"
 
-python downdraft.py "$1"
+SCRIPT_PATH=`dirname $0`
+
+python ${SCRIPT_PATH}/downdraft.py "$1"
 
 compile_story.sh $OUTPUT_PATH $DRAFT_PATH
 
-python updraft.py "$1"
+python ${SCRIPT_PATH}/updraft.py "$1"
