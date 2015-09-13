@@ -51,8 +51,12 @@ cover=`grep -i "^Cover: " "${METADATAFILE}" |awk -F ': ' '{print $2}'`
 language=`grep -i "^Language: " "${METADATAFILE}" |awk -F ': ' '{print $2}'`
 storytype=`grep -i "^StoryType: " "${METADATAFILE}" |awk -F ': ' '{print $2}'`
 draftlevel=`grep -i "^DraftLevel: " "${METADATAFILE}" |awk -F ': ' '{print $2}'`
+scene_divider=`grep -i "^SceneDivider: " "${METADATAFILE}" |awk -F ': ' '{print $2}'`
 
 # Short title can be used if I want to control the final file name. Otherwise, just use $title.
+if [ "$scene_divider" != ""]; then
+    SCENE_DIVIDER="$scene_divider"
+fi
 if [ "$short_title" == "" ]; then
     short_title="${title}"
 fi
@@ -170,10 +174,10 @@ $WKHTML2PDF --margin-top 20 --margin-bottom 20 --margin-right 30 --margin-left 3
 #$EBOOKCONVERT "${OUTPUT_DIR}/${short_title}.html" "${OUTPUT_DIR}/$short_title.mobi" --authors="$author" --series="$series" --series-index=$series_index --title="$title" --tags="$tags" --output-profile=kindle
 
 echo "Compiling EPUB"
-$PANDOC -t epub --epub-stylesheet=$CSS $epub_chapter_level -o "${OUTPUT_DIR}/${short_title}.epub" "${OUTPUT_DIR}/${short_title}.md"
+$PANDOC $smart -t epub --epub-stylesheet=$CSS $epub_chapter_level -o "${OUTPUT_DIR}/${short_title}.epub" "${OUTPUT_DIR}/${short_title}.md"
 
 echo "Compiling DOCX"
-$PANDOC -t docx --reference-docx ${DOCXREF} -o "${OUTPUT_DIR}/${short_title}.docx" "${OUTPUT_DIR}/${short_title}.md"
+$PANDOC $smart -t docx --reference-docx ${DOCXREF} -o "${OUTPUT_DIR}/${short_title}.docx" "${OUTPUT_DIR}/${short_title}.md"
 
 echo "Compiling ODT"
-$PANDOC -t odt --reference-odt ${ODTREF} -o "${OUTPUT_DIR}/${short_title}.odt" "${OUTPUT_DIR}/${short_title}.md"
+$PANDOC $smart -t odt --reference-odt ${ODTREF} -o "${OUTPUT_DIR}/${short_title}.odt" "${OUTPUT_DIR}/${short_title}.md"
