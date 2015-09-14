@@ -27,4 +27,10 @@ There are other scripts in this repository as well.
 
 * cs.sh is a conveniance script for my own setup, that downloads a draft from dropbox, executes the compile\_story-script and uploads all the resulting documents back into dropbox.
 
+### Regarding updraft and downdraft
+
+The scripts require a Dropbox access key to work. You need to register one of these yourself, using the Dropbox API. 
+
+When you have access keys, you just copy the file config.py.in to config.py and update it with your keys.
+
 
