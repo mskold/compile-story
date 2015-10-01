@@ -54,7 +54,7 @@ draftlevel=`grep -i "^DraftLevel: " "${METADATAFILE}" |awk -F ': ' '{print $2}'`
 scene_divider=`grep -i "^SceneDivider: " "${METADATAFILE}" |awk -F ': ' '{print $2}'`
 
 # Short title can be used if I want to control the final file name. Otherwise, just use $title.
-if [ "$scene_divider" != ""]; then
+if [ "$scene_divider" != "" ]; then
     SCENE_DIVIDER="$scene_divider"
 fi
 if [ "$short_title" == "" ]; then
