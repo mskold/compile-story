@@ -36,36 +36,41 @@ Directories inside the draft folder will be treated as chapters in the story, us
 
 1. A short story (without chapters) with the metadata outside the draft folder.
 
-    StoryDirectory/
-        metadata.md
-        draft/
-            01-a scene.md
-            02-another scene.md
-            03-the end.md
+```
+StoryDirectory/
+    metadata.md
+    draft/
+        01-a scene.md
+        02-another scene.md
+        03-the end.md
+```
 
 2. A short story (without chapters) with the metadata inside the draft folder.
 
-    AnotherStoryDirectory/
-        draft/
-            00-metadata.md
-            01-introductory scene.md
-            02-the middle.md
-            03-an explosive ending.md
-
+```
+AnotherStoryDirectory/
+    draft/
+        00-metadata.md
+        01-introductory scene.md
+        02-the middle.md
+        03-an explosive ending.md
+```
 
 3. A longer story (with chapters)
 
-    MyBook/
-        draft/
-            00-metadata.md
-            01-prologue.md
-            02-Chapter 1/
-                01-once upon a time.md
-                02-scene.md
-            03-Chapter 2/
-                01-another scene.md
+```
+MyBook/
+    draft/
+        00-metadata.md
+        01-prologue.md
+        02-Chapter 1/
+            01-once upon a time.md
+            02-scene.md
+        03-Chapter 2/
+            01-another scene.md
 
-    .... etc
+.... etc
+```
 
 ### Usage
 
