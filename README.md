@@ -13,7 +13,61 @@ The script takes two arguments.
 The first is the output directory, into where the compiled files will go.
 The second is the draft diretory – the directory containing the markdown files to be assembled into complete documents.
 
-### Example
+### Files
+
+The script handles two kinds of files:
+
+1. Metadata
+2. Story
+
+Typically, a draft has at most one metadata file and one or more story files. The storyfiles are concatenated into one big file before transformation into other formats.
+
+The metadata file can reside outside (parallell) with the draft directory, or inside it. If it's outside, the metadata file should be named metadata.md, while if it is inside the draft directory, it should be named 00-metadata.md
+
+The metadata can contain information such as the title of the story, the author, revision, language, etc. This information is then used by tools such as pandoc to set metadata about the compiled documents.
+
+The story files will be treated as scenes in the story and thus concatenated with SCENE\_LEVEL (####) and SCENE\_DIVIDER (· · ·) between each file.
+
+### Directories
+
+Directories inside the draft folder will be treated as chapters in the story, using the name of the directory from position 3 (enabling using directory name as sorting for the chapters).
+
+#### Examples
+
+1. A short story (without chapters) with the metadata outside the draft folder.
+
+    StoryDirectory/
+        metadata.md
+        draft/
+            01-a scene.md
+            02-another scene.md
+            03-the end.md
+
+2. A short story (without chapters) with the metadata inside the draft folder.
+
+    AnotherStoryDirectory/
+        draft/
+            00-metadata.md
+            01-introductory scene.md
+            02-the middle.md
+            03-an explosive ending.md
+
+
+3. A longer story (with chapters)
+
+    MyBook/
+        draft/
+            00-metadata.md
+            01-prologue.md
+            02-Chapter 1/
+                01-once upon a time.md
+                02-scene.md
+            03-Chapter 2/
+                01-another scene.md
+
+    .... etc
+
+### Usage
 
     $ compile_story.sh /tmp/output ~/path/to/draft
 
