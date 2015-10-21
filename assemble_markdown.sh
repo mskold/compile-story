@@ -109,7 +109,7 @@ function concat_story() {
             echo "" >> "$OUTPUT_FILE"
             echo "" >> "$OUTPUT_FILE"
             if [ "$part_structure" == "false" ] || [ $depth -eq 2 ]; then
-                if [ $numeric_chapters != "" ]; then
+                if [ "$numeric_chapters" != "" ]; then
                     echo "${CHAPTER_LEVEL} ${numeric_chapters} ${chapter_number}" >> "$OUTPUT_FILE"
                     chapter_number=$((chapter_number+1))
                 else
