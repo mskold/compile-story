@@ -14,6 +14,9 @@ SCRIPT_PATH=`dirname $0`
 
 python ${SCRIPT_PATH}/downdraft.py "$1"
 
-compile_story.sh $OUTPUT_PATH $DRAFT_PATH
+assemble_markdown.sh $OUTPUT_PATH $DRAFT_PATH
+
+markdown_file="${OUTPUT_PATH}/$(ls ${OUTPUT_PATH})"
+compile_story.sh "$markdown_file"
 
 python ${SCRIPT_PATH}/updraft.py "$1"

@@ -7,7 +7,7 @@ BASH script to compile markdown files into HTML, PDF, epub, docx and odt.
 * Pandoc (http://pandoc.org)
 * wkhtmltopdf (http://wkhtmltopdf.org/)
 
-## Usage
+## About
 
 The script takes two arguments.
 The first is the output directory, into where the compiled files will go.
@@ -34,7 +34,7 @@ Directories inside the draft folder will be treated as chapters in the story, us
 
 #### Examples
 
-1. A short story (without chapters) with the metadata outside the draft folder.
+* A short story (without chapters) with the metadata outside the draft folder.
 
 ```
 StoryDirectory/
@@ -45,7 +45,7 @@ StoryDirectory/
         03-the end.md
 ```
 
-2. A short story (without chapters) with the metadata inside the draft folder.
+* A short story (without chapters) with the metadata inside the draft folder.
 
 ```
 AnotherStoryDirectory/
@@ -56,7 +56,7 @@ AnotherStoryDirectory/
         03-an explosive ending.md
 ```
 
-3. A longer story (with chapters)
+* A longer story (with chapters)
 
 ```
 MyBook/

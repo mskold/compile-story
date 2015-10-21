@@ -1,81 +1,85 @@
 p
 {
-	text-indent:1em;
-	margin-top:0;
-	margin-bottom:0;
+    text-indent:1em;
+    margin-top:0;
+    margin-bottom:0;
     font-size: 12pt;
     line-height: 200%;
     font-family: "Times New Roman", "TimesNewRoman", "Times", "serif";
 }
 h1
 {
-    font-size: 16pt;
+    font-size: 18pt;
 }
 h2
 {
-    font-size: 12pt;
+    font-size: 15pt;
 }
 h1, h2
 {
-	text-align:center;
-	text-indent:0;
-	margin-top:0;
+    text-align:center;
+    text-indent:0;
+    margin-top:0;
 }
-h2 {
-    margin-bottom: 3em;
+p+h2 {
+    page-break-before: always;
+    margin-bottom:3em;
+    margin-top:8em;
+
 }
 h3
 {
-	text-align:center;
-	text-indent:0;
-	margin-top:0;
+    text-align:center;
+    text-indent:0;
+    margin-top:0;
     page-break-before: always;
 }
 .author:before {
-  content: "av ";
+    content: "av ";
 }
 
 A:link
 {
-	color:#0000ff;
+    color:#0000ff;
 }
 
 hr {
-  margin-top: 3em;
-  border: none; 
+    margin-top: 3em;
+    border: none; 
 }
 
 h4 {
     margin-top: 1em;
-	text-align: center;
+    text-align: center;
 }
 
 h5 {
-	text-align: center;
-	height: 1em;
+    text-align: center;
+    height: 1em;
 }
 
 #wrapper img {
-  max-width: 100%;
-  height: auto; }
+    max-width: 100%;
+    height: auto;
+}
 
 blockquote p {
-  margin-top: 0.5em;
-  text-indent: 0;
-  font-style: italic; }
+    margin-top: 0.5em;
+    text-indent: 0;
+font-style: italic; }
 
 blockquote+p {
-  margin: 0; 
-  text-indent: 0;
-  }
+    margin: 0; 
+    text-indent: 0;
+}
 
 h1+p, h2+p {
-  margin: 0; 
-  margin-top: 4em;
-  text-indent: 0;
-  }
+    margin: 0; 
+    margin-top: 4em;
+    text-indent: 0;
+}
 
 h3+p, h4+p, h5+p, div+p {
-  margin: 0; 
-  text-indent: 0;
-  }
+    margin: 0; 
+    text-indent: 0;
+}
