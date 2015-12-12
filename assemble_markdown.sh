@@ -31,21 +31,23 @@ metadataoutsidedraft="false"
 
 if [ ! -f "${METADATAFILE}" ]; then
     echo "Metadatafile ${METADATAFILE} not found in ${DRAFT_DIR}."
-    metadataoutsidedraft="true"
     METADATAFILE="${DRAFT_DIR}/../metadata.md"
+    if [ -f ${METADATAFILE} ]; then
+      metadataoutsidedraft="true"
+    fi
 fi
 
 if [ ! -f "${METADATAFILE}" ]; then
-    echo "Metadatafile ${METADATAFILE} does not exist."
-    exit 1
+    echo "Metadatafile ${METADATAFILE} does not exist. Assuming StoryPart ..."
+    file_title="selected"
+else
+  # Get parameters from metadata file
+  title=`grep -i "^Title: " "${METADATAFILE}" |awk -F ': ' '{print $2}'`
+  file_title=`grep -i "^ShortTitle: " "${METADATAFILE}" |awk -F ': ' '{print $2}'`
+  language=`grep -i "^Language: " "${METADATAFILE}" |awk -F ': ' '{print $2}'`
+  scene_divider=`grep -i "^SceneDivider: " "${METADATAFILE}" |awk -F ': ' '{print $2}'`
+  numeric_chapters=`grep -i "^ChapterPrefix: " "${METADATAFILE}" |awk -F ': ' '{print $2}'`
 fi
-
-# Get parameters from metadata file
-title=`grep -i "^Title: " "${METADATAFILE}" |awk -F ': ' '{print $2}'`
-file_title=`grep -i "^ShortTitle: " "${METADATAFILE}" |awk -F ': ' '{print $2}'`
-language=`grep -i "^Language: " "${METADATAFILE}" |awk -F ': ' '{print $2}'`
-scene_divider=`grep -i "^SceneDivider: " "${METADATAFILE}" |awk -F ': ' '{print $2}'`
-numeric_chapters=`grep -i "^ChapterPrefix: " "${METADATAFILE}" |awk -F ': ' '{print $2}'`
 
 # Short title can be used if I want to control the final file name. Otherwise, just use $title.
 if [ "$scene_divider" != "" ]; then

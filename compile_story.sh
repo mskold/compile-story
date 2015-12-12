@@ -40,6 +40,13 @@ draftlevel=`grep -i "^DraftLevel: " "${MARKDOWN_DRAFT}" |awk -F ': ' '{print $2}
 
 if [ "$file_title" == "" ]; then
     file_title="${title}"
+    # If no title is found, assume it's a story section
+    if [ "$file_title" = "" ]; then
+        file_title="selected"
+    fi
+fi
+if [ "$language" == "" ]; then
+    language="swedish"
 fi
 if [ "$draftlevel" == "draft" ]; then
     file_title="$file_title (utkast)"
