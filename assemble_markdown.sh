@@ -49,7 +49,6 @@ else
   numeric_chapters=`grep -i "^ChapterPrefix: " "${METADATAFILE}" |awk -F ': ' '{print $2}'`
 fi
 
-# Short title can be used if I want to control the final file name. Otherwise, just use $title.
 if [ "$scene_divider" != "" ]; then
     SCENE_DIVIDER="$scene_divider"
 fi
@@ -131,7 +130,6 @@ function concat_story() {
                 echo "" >> "$OUTPUT_FILE"
             fi
             if [ "$first_markdown_file_in_directory" == "false" ];then
-                #echo "Inserting divider between scenes."
                 echo "" >> "$OUTPUT_FILE"
                 echo "" >> "$OUTPUT_FILE"
                 echo "${SCENE_LEVEL} ${SCENE_DIVIDER}" >> "$OUTPUT_FILE"
@@ -149,7 +147,6 @@ function concat_story() {
                 echo "---" >> "$OUTPUT_FILE"
                 echo "" >> "$OUTPUT_FILE"
             else
-                #echo "Concatenating storyfile ${file} to output ... "
                 cat "$file" >> "$OUTPUT_FILE"
             fi
         fi

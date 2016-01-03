@@ -21,7 +21,7 @@ The compile-script takes one argument: the name of the markdown-file. The compil
 
 The assemble\_markdown script takes two arguments.
 The first is the output directory, into where the assembled file will go.
-The second is the draft diretory – the directory containing the markdown files to be assembled into one document.
+The second is the draft directory – the directory containing the markdown files to be assembled into one document.
 
 ### Files
 
@@ -131,12 +131,10 @@ There are other scripts in this repository as well.
 
 * updraft.py uploads compiled files into dropbox.
 
-* cs.sh is a conveniance script for my own setup, that downloads a draft from dropbox, executes the compile\_story-script and uploads all the resulting documents back into dropbox.
+* cs.sh is a conveniance script for my own setup. It downloads a draft from dropbox, executes the compile\_story-script and uploads all the resulting documents back into dropbox.
 
 ### Regarding updraft and downdraft
 
-The scripts require a Dropbox access key to work. You need to register one of these yourself, using the Dropbox API. 
+The scripts require a Dropbox access key to work. You need to register one of these yourself, using the Dropbox API.
 
 When you have access keys, you just copy the file config.py.in to config.py and update it with your keys.
-
-

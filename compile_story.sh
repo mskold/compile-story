@@ -1,7 +1,5 @@
 #!/usr/bin/env bash
 
-#OUTPUT_DIR="$1"
-#DRAFT_DIR="$2"
 MARKDOWN_DRAFT="$1"
 
 if [ ! -f "$MARKDOWN_DRAFT" ]; then
