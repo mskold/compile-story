@@ -48,18 +48,17 @@ fi
 if [ "$language" == "" ]; then
     language="swedish"
 fi
+if [ "$draftlevel" == "final" ]; then
+    # If draftlevel is final, prepare a complete file name, ready for submission
+    file_title="$(echo -n "${file_title}-${author}" | tr -s " " "_")"
+elif [ "$revision" != "" ]; then
+    file_title="${file_title}-${revision}"
+fi
 if [ "$draftlevel" == "draft" ]; then
     file_title="$file_title (utkast)"
 fi
 if [ "$draftlevel" == "proof" ]; then
     file_title="$file_title (korrektur)"
-fi
-if [ "$draftlevel" == "final" ]; then
-    # If draftlevel is final, prepare a complete file name, ready for submission
-    file_title="$(echo -n "${file_title}-${author}" | tr -s " " "_")"
-fi
-if [ "$revision" != "" ]; then
-    file_title="${file_title}-${revision}"
 fi
 
 smart=""
