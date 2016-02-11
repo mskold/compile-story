@@ -41,12 +41,13 @@ if [ ! -f "${METADATAFILE}" ]; then
     echo "Metadatafile ${METADATAFILE} does not exist. Assuming StoryPart ..."
     file_title="selected"
 else
-  # Get parameters from metadata file
-  title=`grep -i "^Title: " "${METADATAFILE}" |awk -F ': ' '{print $2}'`
-  file_title=`grep -i "^ShortTitle: " "${METADATAFILE}" |awk -F ': ' '{print $2}'`
-  language=`grep -i "^Language: " "${METADATAFILE}" |awk -F ': ' '{print $2}'`
-  scene_divider=`grep -i "^SceneDivider: " "${METADATAFILE}" |awk -F ': ' '{print $2}'`
-  numeric_chapters=`grep -i "^ChapterPrefix: " "${METADATAFILE}" |awk -F ': ' '{print $2}'`
+    # Get parameters from metadata file
+    title=`grep -i "^Title: " "${METADATAFILE}" |awk -F ': ' '{print $2}'`
+    file_title=`grep -i "^ShortTitle: " "${METADATAFILE}" |awk -F ': ' '{print $2}'`
+    language=`grep -i "^Language: " "${METADATAFILE}" |awk -F ': ' '{print $2}'`
+    scene_divider=`grep -i "^SceneDivider: " "${METADATAFILE}" |awk -F ': ' '{print $2}'`
+    chapter_prefix=`grep -i "^ChapterPrefix: " "${METADATAFILE}" |awk -F ': ' '{print $2}'`
+    story_type=`grep -i "^StoryType: " "${METADATAFILE}" |awk -F ': ' '{print $2}'`
 fi
 
 if [ "$scene_divider" != "" ]; then
@@ -71,7 +72,7 @@ dir_depth() {
 
 manuscript_depth=$(dir_depth "${DRAFT_DIR}")
 
-if [ $manuscript_depth -ge 3 ]; then
+if [ $manuscript_depth -ge 2 ]; then
     # Directory depth indicates a manuscript with parts
     part_structure="true"
     echo "Setting part structure"
@@ -97,47 +98,39 @@ function concat_story() {
     first_markdown_file_in_directory="true"
     depth=$1
     for file in "${@:2}"; do
+        bnamech=`basename "$file"`
+        # Find position of dash in directory name
+        dash_position=0
+        tmp="${bnamech%%-*}"
+        if [ "$tmp" != "$bnamech" ]; then
+            dash_position=$((${#tmp}+1))
+        fi
+        section="${bnamech:$dash_position}"
         if [ -d "$file" ]; then
             depth=$((depth+1))
-            bnamech=`basename "$file"`
-            # Find position of dash in directory name
-            dash_position=0
-            tmp="${bnamech%%-*}"
-            if [ "$tmp" != "$bnamech" ]; then
-                dash_position=$((${#tmp}+1))
-            fi
-            section="${bnamech:$dash_position}"
             echo "" >> "$OUTPUT_FILE"
             echo "" >> "$OUTPUT_FILE"
-            if [ "$part_structure" == "false" ] || [ $depth -eq 2 ]; then
-                if [ "$numeric_chapters" != "" ]; then
-                    echo "${CHAPTER_LEVEL} ${numeric_chapters} ${chapter_number}" >> "$OUTPUT_FILE"
-                    chapter_number=$((chapter_number+1))
-                else
-                    echo "${CHAPTER_LEVEL} ${section}" >> "$OUTPUT_FILE"
-                fi
-            else
-                echo "${PART_LEVEL} ${section}" >> "$OUTPUT_FILE"
-            fi
+            #if [ "$part_structure" == "false" ] || [ $depth -eq 2 ]; then
+            #    if [ "$chapter_prefix" != "" ]; then
+            #        echo "${CHAPTER_LEVEL} ${chapter_prefix} ${chapter_number}" >> "$OUTPUT_FILE"
+            #        chapter_number=$((chapter_number+1))
+            #    else
+            #        echo "${CHAPTER_LEVEL} ${section}" >> "$OUTPUT_FILE"
+            #    fi
+            #else
+            echo "${PART_LEVEL} ${section}" >> "$OUTPUT_FILE"
+            #fi
             echo "" >> "$OUTPUT_FILE"
             concat_story $depth "$file"/*
             depth=$((depth-1))
         else
+            # Breath some space into output file
+            echo "" >> "$OUTPUT_FILE"
+            echo "" >> "$OUTPUT_FILE"
             if head -1 "$file" |grep -q "^#"; then
                 first_markdown_file_in_directory="true"
-                # Breath some space into output file
-                echo "" >> "$OUTPUT_FILE"
-                echo "" >> "$OUTPUT_FILE"
             fi
-            if [ "$first_markdown_file_in_directory" == "false" ];then
-                echo "" >> "$OUTPUT_FILE"
-                echo "" >> "$OUTPUT_FILE"
-                echo "${SCENE_LEVEL} ${SCENE_DIVIDER}" >> "$OUTPUT_FILE"
-                echo "" >> "$OUTPUT_FILE"
-            fi
-            first_markdown_file_in_directory="false"
             if [ "$(basename "$file")" == "00-metadata.md" ]; then
-                echo "Inserting metadata ${file} into output ... "
                 first_markdown_file_in_directory="true"
                 # Append metadata.md as YAML section in master markdown file
                 # (This enables pandoc to add metadata to generated documents, such as Author and Title)
@@ -147,7 +140,19 @@ function concat_story() {
                 echo "---" >> "$OUTPUT_FILE"
                 echo "" >> "$OUTPUT_FILE"
             else
+                if [ "$story_type" == "Novel" ]; then
+                    if [ "$chapter_prefix" != "" ]; then
+                        echo "${CHAPTER_LEVEL} ${chapter_prefix} ${chapter_number}" >> "$OUTPUT_FILE"
+                        chapter_number=$((chapter_number+1))
+                    else
+                        echo "${CHAPTER_LEVEL} ${section}" >> "$OUTPUT_FILE"
+                    fi
+                elif [ "$first_markdown_file_in_directory" == "false" ]; then
+                        echo "${SCENE_LEVEL} ${SCENE_DIVIDER}" >> "$OUTPUT_FILE"
+                fi
+                echo "" >> "$OUTPUT_FILE"
                 cat "$file" >> "$OUTPUT_FILE"
+                first_markdown_file_in_directory="false"
             fi
         fi
     done
