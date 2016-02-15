@@ -20,11 +20,7 @@ PART_LEVEL="##"
 CHAPTER_LEVEL="###"
 SCENE_LEVEL="####"
 SCENE_DIVIDER="· · ·"
-
-PANDOC="pandoc"
-WKHTML2PDF="wkhtmltopdf"
-# I needed to wrap wkhtmltopdf in a script calling it with xvfb-run when on a headless linux box
-#WKHTML2PDF="wkhtml2pdf.sh"
+SCENE_DIVIDER_REPLACE_MARK="***"
 
 METADATAFILE="${DRAFT_DIR}/00-metadata.md"
 metadataoutsidedraft="false"
@@ -163,6 +159,8 @@ function concat_story() {
 # Individual markdown files in each directory are concatenated with a $SCENE_DIVIDER as separator (with heading level $SCENE_LEVEL)
 concat_story 0 "${DRAFT_DIR}"/*
 
+# Replace scene mark with configured scene divider.
+sed -i.sed "s/\*\*\*/${SCENE_LEVEL} ${SCENE_DIVIDER}/" "$OUTPUT_FILE" && rm "${OUTPUT_FILE}.sed"
 # Replace double dash with en-dash
 sed -i.sed 's/ -- / – /g' "$OUTPUT_FILE" && rm "${OUTPUT_FILE}.sed"
 # Remove trailing whitespace (yes, i think the "double space linebreak" is an abomination in markdown).
