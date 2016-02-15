@@ -25,7 +25,7 @@ def mkdir_p(path):
 
 client = dropbox.client.DropboxClient(download_access_token)
 try:
-    share_metadata = client.share(join(TEXT_DIR, storyname, 'draft'), short_url=False)
+    share_metadata = client.share(join(TEXT_DIR, '_romaner', storyname, 'draft'), short_url=False)
 except dropbox.rest.ErrorResponse as e:
     print("%s apparently not a novel. Trying short story ..." % storyname)
     share_metadata = client.share(join(TEXT_DIR, '_noveller', storyname, 'draft'), short_url=False)
