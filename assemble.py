@@ -1,12 +1,18 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import dropbox
 import urllib2
 from zipfile import ZipFile
 import sys, fileinput, os, re
 from os.path import isfile, isdir, join, basename, dirname
 from StringIO import StringIO
+
+try:
+    import dropbox
+except ImportError:
+    sys.stderr.write("Dropbox API not found\n")
+    dropbox = False
+
 
 from config import download_access_token
 
@@ -28,10 +34,12 @@ def main(sys):
         elif isfile(sys.argv[1]) or len(sys.argv) > 2:
             # Assume got multiple files as input
             files = sorted([basename(sys.argv[i]) for i in range(1,len(sys.argv)) if isfile(sys.argv[i]) and (sys.argv[i].endswith(".md") or sys.argv[i].endswith(".txt"))])
-        else:
+        elif dropbox:
             read_from_disk=False
+        else:
+            sys.exit("Error: %s is not a directory" % sys.argv[1])
     else:
-        sys.exit("Error: %s is not a directory" % sys.argv[1])
+        sys.exit("Error: No valid arguments supplied")
 
     if read_from_disk:
         draft_files = load_from_disk(files, dirname(sys.argv[1]))
