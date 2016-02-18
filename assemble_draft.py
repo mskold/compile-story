@@ -53,7 +53,12 @@ def join_files(draft_data):
 
 	manuscript = yaml_section + '\n' + manuscript
 
-	return (metadata.get('title','draft'), manuscript)
+	if 'revision' in metadata:
+		title = '%s_%s' % (metadata.get('title','draft'), metadata.get('revision'))
+	else:
+		title = metadata.get('title','draft')
+
+	return (title, manuscript)
 
 def list_files(directory):
 	draft_data = collections.OrderedDict()
