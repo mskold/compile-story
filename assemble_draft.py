@@ -49,7 +49,7 @@ def join_files(draft_data):
 	yaml_section = "---\n"
 	for key, value in metadata.items():
 		yaml_section += key + ": " + value + "\n"
-		yaml_section += "---\n"
+	yaml_section += "---\n"
 
 	manuscript = yaml_section + '\n' + manuscript
 
