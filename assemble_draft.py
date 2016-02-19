@@ -58,6 +58,9 @@ def join_files(draft_data):
 	else:
 		title = metadata.get('title','draft')
 
+	manuscript = manuscript.replace('"', '”')
+	manuscript = manuscript.repalce(' -- ', ' – ')
+
 	return (title, manuscript)
 
 def list_files(directory):
