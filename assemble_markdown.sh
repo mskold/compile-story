@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+# Deprecated. Use assemble_draft.py instead.
+
 OUTPUT_DIR="$1"
 DRAFT_DIR="$2"
 
