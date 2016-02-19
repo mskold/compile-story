@@ -1,6 +1,5 @@
 #coding: utf-8
-import workflow, editor, console, clipboard
-import re, os, collections
+import sys,re, os, collections
 from os.path import isfile, isdir, join, basename, dirname
 
 def parse_metadata(mdcontent):
@@ -59,7 +58,7 @@ def join_files(draft_data):
 		title = metadata.get('title','draft')
 
 	manuscript = manuscript.replace('"', '”')
-	manuscript = manuscript.repalce(' -- ', ' – ')
+	manuscript = manuscript.replace(' -- ', ' – ')
 
 	return (title, manuscript)
 
@@ -75,3 +74,9 @@ def list_files(directory):
 def assemble(directory):
 	draft_files = list_files(directory)
 	return  join_files(draft_files)
+
+if __name__ == '__main__':
+	if len(sys.argv) < 2:
+		sys.exit("Usage: %s <directory>" % sys.argv[0])
+	(title, manuscript) = assemble(sys.argv[1])
+	print manuscript
