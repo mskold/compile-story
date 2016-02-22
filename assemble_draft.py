@@ -29,7 +29,7 @@ def _join_novel(chapter_names, data):
 	return manuscript
 
 
-def _join_files(draft_data):
+def _join_files(draft_data, with_yaml):
 	metadata = parse_metadata(draft_data.get('00-metadata.md'))
 	if '00-metadata.md' in draft_data:
 		del draft_data['00-metadata.md']
@@ -69,12 +69,15 @@ def _join_files(draft_data):
 	# replace scene breaks with proper breaks
 	manuscript = manuscript.replace("***", "#### · · ·")
 
-	yaml_section = "---\n"
-	for key, value in metadata.items():
-		yaml_section += key + ": " + value + "\n"
-	yaml_section += "---\n"
+	if with_yaml:
+		yaml_section = "---\n"
+		for key, value in metadata.items():
+			yaml_section += key + ": " + value + "\n"
+		yaml_section += "---\n\n"
+	else:
+		yaml_section = '# %s\n\n## av %s\n\n' % (metadata.get('title','Utan titel'), metadata.get('author','Okänd'))
 
-	manuscript = yaml_section + '\n' + manuscript
+	manuscript = yaml_section +  manuscript
 
 	if 'revision' in metadata:
 		title = '%s_%s' % (metadata.get('title','draft'), metadata.get('revision'))
@@ -98,9 +101,9 @@ def list_files(directory):
 				draft_data['parts'] = True
 	return draft_data
 
-def assemble(directory):
+def assemble(directory, with_yaml = True):
 	draft_files = list_files(directory)
-	return _join_files(draft_files)
+	return _join_files(draft_files, with_yaml)
 
 if __name__ == '__main__':
 	if len(sys.argv) < 2:
