@@ -2,6 +2,8 @@
 import sys,re, os, collections
 from os.path import isfile, isdir, join, basename, dirname
 
+chapter_index = 0
+
 def parse_metadata(mdcontent):
 	metadata = {}
 	if mdcontent:
@@ -11,8 +13,23 @@ def parse_metadata(mdcontent):
 				metadata[key] = value
 	return metadata
 
+def _join_novel(chapter_names, data):
+	global chapter_index
+	manuscript = ''
+	for key, content in data.items():
+		if key.startswith("PART:"):
+			# Append all data in part
+			manuscript += '\n\n## %s\n\n' % key.split('-')[1]
+			manuscript += _join_novel(chapter_names, content)
+		else:
+			if not content.startswith('#'):
+				manuscript+=chapter_names[chapter_index]
+				chapter_index += 1
+			manuscript+=content
+	return manuscript
 
-def join_files(draft_data):
+
+def _join_files(draft_data):
 	metadata = parse_metadata(draft_data.get('00-metadata.md'))
 	if '00-metadata.md' in draft_data:
 		del draft_data['00-metadata.md']
@@ -20,22 +37,29 @@ def join_files(draft_data):
 	file_delimeter = "\n\n#### · · ·\n\n"
 
 	# Join all scenes/chapters
-	if metadata.get('storytype') == "Novel":
-		chapters = ["\n\n### %s %d\n\n" % (metadata.get("chapterprefix", ""), n) for n in range(1,len(draft_data)+1)]
-		draft_list = draft_data.values()
-		manuscript = ""
-		for i in range(0,len(draft_data)):
-			manuscript+=chapters[i]
-			manuscript+=draft_list[i]
-		# Set for replace matching later
+	if metadata.get('storytype','').lower() == 'Novel'.lower():
+		if draft_data.pop('parts',False):
+			# Count chapters
+			numchaps = 0
+			for key, possible_part in draft_data.items():
+				if key.startswith("PART:"):
+					numchaps += len(draft_data[key])
+				else:
+					numchaps += 1
+			chapters = ["\n\n### %s %d\n\n" % (metadata.get("chapterprefix", ""), n) for n in range(1,numchaps)]
+			global chapter_index
+			chapter_index = 0
+		else:
+			chapters = ["\n\n### %s %d\n\n" % (metadata.get("chapterprefix", ""), n) for n in range(1,len(draft_data)+1)]
+
+		manuscript = _join_novel(chapters,draft_data)
 		file_delimeter = "\n\n### %s [0-9]+\n\n" % metadata.get("chapterprefix", "")
+
 	else:
 		manuscript = file_delimeter.join(draft_data.values())
 
 	pattern = '(%s#{3,4} [A-Za-z0-9åäöÅÄÖ .]+)' % file_delimeter
 	matched_scene_breaks = re.findall(pattern, manuscript)
-	#print "p", pattern
-	#print "m", matched_scene_breaks
 	if matched_scene_breaks:
 		for matched_break in matched_scene_breaks:
 			scene_name = matched_break.split("\n")[4]
@@ -69,11 +93,14 @@ def list_files(directory):
 			if isfile(join(directory, f)) and f.endswith(".md"):
 				with open(join(directory, f), 'r') as draft_file:
 					draft_data[basename(f)] = draft_file.read()
+			elif isdir(join(directory, f)):
+				draft_data['PART:'+basename(f)] = list_files(join(directory, f))
+				draft_data['parts'] = True
 	return draft_data
 
 def assemble(directory):
 	draft_files = list_files(directory)
-	return  join_files(draft_files)
+	return _join_files(draft_files)
 
 if __name__ == '__main__':
 	if len(sys.argv) < 2:
