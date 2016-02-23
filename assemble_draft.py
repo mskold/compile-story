@@ -22,7 +22,9 @@ def _join_novel(chapter_names, data):
 			manuscript += '\n\n## %s\n\n' % key.split('-')[1]
 			manuscript += _join_novel(chapter_names, content)
 		else:
-			if not content.startswith('#'):
+			if content.startswith('#'):
+				manuscript += '\n\n'
+			else:
 				manuscript+=chapter_names[chapter_index]
 				chapter_index += 1
 			manuscript+=content
