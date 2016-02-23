@@ -86,7 +86,7 @@ def _join_files(draft_data, with_yaml):
 
 	manuscript = manuscript.replace('"', '”')
 	manuscript = manuscript.replace(' -- ', ' – ')
-
+	manuscript = re.sub(' +', ' ', manuscript)
 	return (title, manuscript)
 
 def list_files(directory):
