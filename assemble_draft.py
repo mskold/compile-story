@@ -1,8 +1,9 @@
 #coding: utf-8
 import sys,re, os, collections
-from os.path import isfile, isdir, join, basename, dirname
+from os.path import abspath, isfile, isdir, join, basename, dirname
 
 chapter_index = 0
+scene_divider = "#### · · ·"
 
 def parse_metadata(mdcontent):
 	metadata = {}
@@ -13,21 +14,25 @@ def parse_metadata(mdcontent):
 				metadata[key] = value
 	return metadata
 
-def _join_novel(chapter_names, data):
+def _join_manuscript(data, metadata, chapter_names):
 	global chapter_index
 	manuscript = ''
+	first_scene = True
 	for key, content in data.items():
 		if key.startswith("PART:"):
 			# Append all data in part
 			manuscript += '\n\n## %s\n\n' % key.split('-')[1]
-			manuscript += _join_novel(chapter_names, content)
+			manuscript += _join_novel(content, metadata, chapter_names)
 		else:
 			if content.startswith('#'):
 				manuscript += '\n\n'
-			else:
+			elif metadata.get('storytype','').lower() == 'Novel'.lower():
 				manuscript+=chapter_names[chapter_index]
 				chapter_index += 1
+			elif not first_scene:
+				manuscript+='\n\n%s\n\n' % scene_divider
 			manuscript+=content
+			first_scene = False
 	return manuscript
 
 
@@ -36,7 +41,7 @@ def _join_files(draft_data, with_yaml):
 	if '00-metadata.md' in draft_data:
 		del draft_data['00-metadata.md']
 
-	file_delimeter = "\n\n#### · · ·\n\n"
+	chapters = []
 
 	# Join all scenes/chapters
 	if metadata.get('storytype','').lower() == 'Novel'.lower():
@@ -54,22 +59,7 @@ def _join_files(draft_data, with_yaml):
 		else:
 			chapters = ["\n\n### %s %d\n\n" % (metadata.get("chapterprefix", ""), n) for n in range(1,len(draft_data)+1)]
 
-		manuscript = _join_novel(chapters,draft_data)
-		file_delimeter = "\n\n### %s [0-9]+\n\n" % metadata.get("chapterprefix", "")
-
-	else:
-		manuscript = file_delimeter.join(draft_data.values())
-
-	pattern = '(%s#{3,4} [A-Za-z0-9åäöÅÄÖ .]+)' % file_delimeter
-	matched_scene_breaks = re.findall(pattern, manuscript)
-	if matched_scene_breaks:
-		for matched_break in matched_scene_breaks:
-			scene_name = matched_break.split("\n")[4]
-			pattern = "#{3,4} [A-Za-z0-9åäöÅÄÖ ·.]+\n\n%s\n\n" % scene_name
-			manuscript = re.sub(pattern, scene_name+"\n\n", manuscript, 1, re.MULTILINE)
-
-	# replace scene breaks with proper breaks
-	manuscript = manuscript.replace("***", "#### · · ·")
+	manuscript = _join_manuscript(draft_data, metadata, chapters)
 
 	if with_yaml:
 		yaml_section = "---\n"
@@ -86,6 +76,8 @@ def _join_files(draft_data, with_yaml):
 	else:
 		title = metadata.get('title','draft')
 
+	# replace scene breaks with proper breaks
+	manuscript = manuscript.replace("***", scene_divider)
 	manuscript = manuscript.replace('"', '”')
 	manuscript = manuscript.replace(' -- ', ' – ')
 	manuscript = re.sub(' +', ' ', manuscript)
@@ -103,12 +95,20 @@ def list_files(directory):
 				draft_data['parts'] = True
 	return draft_data
 
-def assemble(directory, with_yaml = True):
+def assemble(start_dir, with_yaml = True):
+	directory = start_dir
+	while basename(directory) != 'draft':
+		directory = abspath(join(directory, '..'))
+		if directory == '/':
+			# If there is no draft directory, work from the specified directory
+			directory = start_dir
+			break
+
 	draft_files = list_files(directory)
 	return _join_files(draft_files, with_yaml)
 
 if __name__ == '__main__':
 	if len(sys.argv) < 2:
 		sys.exit("Usage: %s <directory>" % sys.argv[0])
-	(title, manuscript) = assemble(sys.argv[1])
+	(title, manuscript) = assemble(abspath(sys.argv[1]))
 	print manuscript
