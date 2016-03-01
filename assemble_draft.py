@@ -86,7 +86,7 @@ def _join_files(draft_data, with_yaml):
 def list_files(directory):
 	draft_data = collections.OrderedDict()
 	if isdir(directory):
-		for f in os.listdir(directory):
+		for f in sorted(os.listdir(directory)):
 			if isfile(join(directory, f)) and f.endswith(".md"):
 				with open(join(directory, f), 'r') as draft_file:
 					draft_data[basename(f)] = draft_file.read()
