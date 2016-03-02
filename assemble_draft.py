@@ -78,8 +78,11 @@ def _join_files(draft_data, with_yaml):
 
 	# replace scene breaks with proper breaks
 	manuscript = manuscript.replace("***", scene_divider)
-	manuscript = manuscript.replace('"', '”')
-	manuscript = manuscript.replace(' -- ', ' – ')
+	if metadata.get('language', 'swedish') == 'swedish':
+		manuscript = manuscript.replace('"', '”')
+		manuscript = manuscript.replace(' -- ', ' – ')
+	else:
+		manuscript = manuscript.replace(' -- ', '—')
 	manuscript = re.sub(' +', ' ', manuscript)
 	return (title, manuscript)
 
