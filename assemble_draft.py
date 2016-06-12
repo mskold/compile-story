@@ -3,10 +3,11 @@ import sys, re, os, collections
 from zipfile import ZipFile
 from StringIO import StringIO
 import urllib2
-from os.path import abspath, isfile, isdir, join, basename, dirname
+from os.path import abspath, isfile, isdir, join, basename
 
 chapter_index = 0
 scene_divider = u'#### · · ·'
+
 
 def parse_metadata(mdcontent):
     metadata = {}
@@ -16,6 +17,7 @@ def parse_metadata(mdcontent):
                 (key, value) = mdline.split(': ')
                 metadata[key] = value
     return metadata
+
 
 def _join_manuscript(data, metadata, chapter_names):
     global chapter_index
@@ -83,11 +85,13 @@ def _join_files(draft_data, with_yaml):
     manuscript = manuscript.replace('***', scene_divider)
     if metadata.get('language', 'swedish') == 'swedish':
         manuscript = manuscript.replace('"', u'”')
+        manuscript = manuscript.replace("'", u'’')
         manuscript = manuscript.replace(' -- ', u' – ')
     else:
         manuscript = manuscript.replace(' -- ', u'—')
     manuscript = re.sub(' +', u' ', manuscript)
-    return (title, manuscript)
+    return title, manuscript
+
 
 def list_files(directory):
     draft_data = collections.OrderedDict()
@@ -97,9 +101,10 @@ def list_files(directory):
                 with open(join(directory, f), 'r') as draft_file:
                     draft_data[basename(f)] = draft_file.read().decode('utf-8')
             elif isdir(join(directory, f)):
-                draft_data['PART:'+basename(f)] = list_files(join(directory, f))
+                draft_data['PART:'+basename(f).decode('utf-8')] = list_files(join(directory, f))
                 draft_data['parts'] = True
     return draft_data
+
 
 def list_zip_files(url):
     draft_data = collections.OrderedDict()
@@ -108,7 +113,6 @@ def list_zip_files(url):
 
     zipfile = ZipFile(StringIO(drafturl.read()))
 
-    draft_files = []
     for fn in sorted(zipfile.namelist()):
         if not fn.endswith('/'):
             if '/' in fn:
@@ -123,6 +127,7 @@ def list_zip_files(url):
 
     return draft_data
 
+
 def assemble(start_dir, with_yaml = True):
     directory = start_dir
     while basename(directory) != 'draft':
@@ -135,9 +140,11 @@ def assemble(start_dir, with_yaml = True):
     draft_files = list_files(directory)
     return _join_files(draft_files, with_yaml)
 
+
 def assemble_zip(url, with_yaml = True):
     draft_files = list_zip_files(url)
     return _join_files(draft_files, with_yaml)
+
 
 if __name__ == '__main__':
     if len(sys.argv) < 2:
