@@ -58,7 +58,7 @@ def _join_files(draft_data, with_yaml):
                     numchaps += len(draft_data[key])
                 else:
                     numchaps += 1
-            chapters = ['\n\n### %s %d\n\n' % (metadata.get('chapterprefix', ''), n) for n in range(1,numchaps)]
+            chapters = ['\n\n### %s %d\n\n' % (metadata.get('chapterprefix', ''), n) for n in range(1,numchaps+1)]
             global chapter_index
             chapter_index = 0
         else:
