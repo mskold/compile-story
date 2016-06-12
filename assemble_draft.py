@@ -1,4 +1,4 @@
-#coding: utf-8
+# coding: utf-8
 import sys, re, os, collections
 from zipfile import ZipFile
 from StringIO import StringIO
@@ -31,12 +31,12 @@ def _join_manuscript(data, metadata, chapter_names):
         else:
             if content.startswith('#'):
                 manuscript += '\n\n'
-            elif metadata.get('storytype','').lower() == 'Novel'.lower():
-                manuscript+=chapter_names[chapter_index]
+            elif metadata.get('storytype', '').lower() == 'Novel'.lower():
+                manuscript += chapter_names[chapter_index]
                 chapter_index += 1
             elif not first_scene:
-                manuscript+='\n\n%s\n\n' % scene_divider
-            manuscript+=content
+                manuscript += '\n\n%s\n\n' % scene_divider
+            manuscript += content
             first_scene = False
     return manuscript
 
@@ -49,8 +49,8 @@ def _join_files(draft_data, with_yaml):
     chapters = []
 
     # Join all scenes/chapters
-    if metadata.get('storytype','').lower() == 'Novel'.lower():
-        if draft_data.pop('parts',False):
+    if metadata.get('storytype', '').lower() == 'Novel'.lower():
+        if draft_data.pop('parts', False):
             # Count chapters
             numchaps = 0
             for key, possible_part in draft_data.items():
@@ -74,12 +74,12 @@ def _join_files(draft_data, with_yaml):
     else:
         yaml_section = '# %s\n\n## av %s\n\n' % (metadata.get('title','Utan titel'), metadata.get('author','Okänd'))
 
-    manuscript = yaml_section +  manuscript
+    manuscript = yaml_section + manuscript
 
     if 'revision' in metadata:
-        title = '%s_%s' % (metadata.get('title','draft'), metadata.get('revision'))
+        title = '%s_%s' % (metadata.get('title', 'draft'), metadata.get('revision'))
     else:
-        title = metadata.get('title','draft')
+        title = metadata.get('title', 'draft')
 
     # replace scene breaks with proper breaks
     manuscript = manuscript.replace('***', scene_divider)
@@ -109,7 +109,7 @@ def list_files(directory):
 def list_zip_files(url):
     draft_data = collections.OrderedDict()
 
-    drafturl = urllib2.urlopen(url.replace('?dl=0','?dl=1'))
+    drafturl = urllib2.urlopen(url.replace('?dl=0', '?dl=1'))
 
     zipfile = ZipFile(StringIO(drafturl.read()))
 

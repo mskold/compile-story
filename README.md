@@ -1,13 +1,14 @@
 # compile_story.sh
 
-BASH script to compile markdown files into HTML, PDF, epub, docx and odt.
+BASH script to compile markdown file into HTML, PDF, epub, docx and odt.
 
-# assemble_markdown.sh
+# assemble_draft.py
 
-BASH script to assemble a tree structure of markdown files into one file.
+Python script to assemble a tree structure of markdown files into one file.
 
 ## Requirements
 
+* Python
 * BASH
 * Pandoc (http://pandoc.org)
 * wkhtmltopdf (http://wkhtmltopdf.org/)
@@ -19,9 +20,7 @@ which compiles HTML, EPUB, DOCX, ODT and PDF from a master Markdown file.
 
 The compile-script takes one argument: the name of the markdown-file. The compiled files will end up in the same directory as the markdown file.
 
-The assemble\_markdown script takes two arguments.
-The first is the output directory, into where the assembled file will go.
-The second is the draft directory – the directory containing the markdown files to be assembled into one document.
+The assemble\_draft.py script takes one argument: The draft directory, containing the markdown files to be assembled into one document.
 
 ### Files
 
@@ -40,12 +39,20 @@ The story files will be treated as scenes in the story and thus concatenated wit
 
 ### Directories
 
-Directories containing markdown files will be treated as chapters in the story. Directories containing other directories will be treated as parts
-using the name of the directory from after the first occurrence of a hyphen character as the part name (e.g. "001-Part One/" => "## Part One")
+Directories will be treated as parts using the name of the directory from after the first occurrence of a hyphen character as the part name (e.g. "001-Part One/" => "## Part One")
+
+### Novels or short stories
+
+Setting the storytype-parameter in the 00-metadata.md impacts how the assembly script treats individual markdown files. If storytype is set to "Novel", each markdown file will be treated as a chapter (i.e. the separator used will be the CHAPTER-separator (###) and an automatic chapter number, with an optional "chapterprefix".
+
+If the storytype is unset (default) or set to "short story", each markdown file will be treated as a scene in the story (the separator will be #### · · ·).
+
+Both chapternames and scene dividers may be overridden by adding a chapter or scenedivider as the first line in the following file.
+
 
 #### Examples
 
-* A short story (without chapters) with the metadata outside the draft folder.
+* A story with the metadata outside the draft folder.
 
 ```
 StoryDirectory/
@@ -56,7 +63,7 @@ StoryDirectory/
         03-the end.md
 ```
 
-* A short story (without chapters) with the metadata inside the draft folder.
+* A story with the metadata inside the draft folder.
 
 ```
 AnotherStoryDirectory/
@@ -67,61 +74,27 @@ AnotherStoryDirectory/
         03-an explosive ending.md
 ```
 
-* A longer story (with chapters)
+* A longer story (with parts)
 
 ```
 MyBook/
     draft/
         00-metadata.md
         01-prologue.md
-        02-Chapter 1/
+        02-Part 1/
             01-once upon a time.md
             02-scene.md
-        03-Chapter 2/
+            ...
+        03-Part 2/
             01-another scene.md
 
 .... etc
 ```
 
-* An even longer story (with parts and chapters)
-
-```
-MyOpus/
-    draft/
-        00-metadata.md
-        01-prologue.md
-        02-Part One/
-            01-Chapter 1/
-                01-once upon a time.md
-                02-scene.md
-            02-Chapter 2/
-                01-another scene.md
-        03-Part Two/
-            01-Chapter 3/
-                01-twice upon a time.md
-                02-scene.md
-            02-Chapter 4/
-                01-another scene.md
-
-.... etc
-```
-
-##### Note
-
-If you feel that naming of chapters (i.e. by the dir name after hyphen) is tedious, you can set the parameter ChapterPrefix in 00-metadata.md to use automatic numbering of chapters.
-
-```
-title: My story
-author: You
-chapterPrefix: Chapter
-```
-
-This will result in chapters being named Chapter 1, Chapter 2, Chapter 3, etc.
-
 ### Usage
 
-    $ assemble_markdown.sh /tmp/output ~/path/to/draft
-    $ compile_story.sh /tmp/output/my_assembled_draft.md
+        $ assemble_draft.py ~/path/to/draft > /tmp/output/my_assembled_draft.md
+        $ compile_story.sh /tmp/output/my_assembled_draft.md
 
 ## Other scrips
 
