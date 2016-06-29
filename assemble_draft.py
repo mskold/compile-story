@@ -1,15 +1,18 @@
 # coding: utf-8
-import sys, re, os, collections
+import sys
+import os
+import re
+import collections
+import urllib2
 from zipfile import ZipFile
 from StringIO import StringIO
-import urllib2
 from os.path import abspath, isfile, isdir, join, basename
 
 chapter_index = 0
 scene_divider = u'#### · · ·'
 
 
-def parse_metadata(mdcontent):
+def _parse_metadata(mdcontent):
     metadata = {}
     if mdcontent:
         for mdline in mdcontent.split('\n'):
@@ -41,8 +44,8 @@ def _join_manuscript(data, metadata, chapter_names):
     return manuscript
 
 
-def _join_files(draft_data, with_yaml):
-    metadata = parse_metadata(draft_data.get('00-metadata.md'))
+def _prepare_and_join_manuscript(draft_data, with_yaml):
+    metadata = _parse_metadata(draft_data.get('00-metadata.md'))
     if '00-metadata.md' in draft_data:
         del draft_data['00-metadata.md']
 
@@ -58,11 +61,11 @@ def _join_files(draft_data, with_yaml):
                     numchaps += len(draft_data[key])
                 else:
                     numchaps += 1
-            chapters = ['\n\n### %s %d\n\n' % (metadata.get('chapterprefix', ''), n) for n in range(1,numchaps+1)]
+            chapters = ['\n\n### %s %d\n\n' % (metadata.get('chapterprefix', ''), n) for n in range(1, numchaps+1)]
             global chapter_index
             chapter_index = 0
         else:
-            chapters = ['\n\n### %s %d\n\n' % (metadata.get('chapterprefix', ''), n) for n in range(1,len(draft_data)+1)]
+            chapters = ['\n\n### %s %d\n\n' % (metadata.get('chapterprefix', ''), n) for n in range(1, len(draft_data)+1)]
 
     manuscript = _join_manuscript(draft_data, metadata, chapters)
 
@@ -72,14 +75,14 @@ def _join_files(draft_data, with_yaml):
             yaml_section += key + ': ' + value + '\n'
         yaml_section += '---\n\n'
     else:
-        yaml_section = '# %s\n\n## av %s\n\n' % (metadata.get('title','Utan titel'), metadata.get('author','Okänd'))
+        yaml_section = '# %s\n\n## av %s\n\n' % (metadata.get('title', 'Utan titel'), metadata.get('author', 'Okänd'))
 
     manuscript = yaml_section + manuscript
 
     if 'revision' in metadata:
-        title = '%s_%s' % (metadata.get('title', 'draft'), metadata.get('revision'))
+        storytitle = '%s_%s' % (metadata.get('title', 'draft'), metadata.get('revision'))
     else:
-        title = metadata.get('title', 'draft')
+        storytitle = metadata.get('title', 'draft')
 
     # replace scene breaks with proper breaks
     manuscript = manuscript.replace('***', scene_divider)
@@ -90,10 +93,10 @@ def _join_files(draft_data, with_yaml):
     else:
         manuscript = manuscript.replace(' -- ', u'—')
     manuscript = re.sub(' +', u' ', manuscript)
-    return title, manuscript
+    return storytitle, manuscript
 
 
-def list_files(directory):
+def _build_draft_contents(directory):
     draft_data = collections.OrderedDict()
     if isdir(directory):
         for f in sorted(os.listdir(directory)):
@@ -101,18 +104,15 @@ def list_files(directory):
                 with open(join(directory, f), 'r') as draft_file:
                     draft_data[basename(f)] = draft_file.read().decode('utf-8')
             elif isdir(join(directory, f)):
-                draft_data['PART:'+basename(f).decode('utf-8')] = list_files(join(directory, f))
+                draft_data['PART:'+basename(f).decode('utf-8')] = _build_draft_contents(join(directory, f))
                 draft_data['parts'] = True
     return draft_data
 
 
-def list_zip_files(url):
+def _get_zipfile_contents(url):
     draft_data = collections.OrderedDict()
-
-    drafturl = urllib2.urlopen(url.replace('?dl=0', '?dl=1'))
-
-    zipfile = ZipFile(StringIO(drafturl.read()))
-
+    draft_url = urllib2.urlopen(url.replace('?dl=0', '?dl=1'))
+    zipfile = ZipFile(StringIO(draft_url.read()))
     for fn in sorted(zipfile.namelist()):
         if not fn.endswith('/'):
             if '/' in fn:
@@ -124,11 +124,10 @@ def list_zip_files(url):
                 draft_data[part][filename] = zipfile.open(fn).read().decode('utf-8')
             else:
                 draft_data[fn] = zipfile.open(fn).read().decode('utf-8')
-
     return draft_data
 
 
-def assemble(start_dir, with_yaml = True):
+def assemble(start_dir, with_yaml=True):
     directory = start_dir
     while basename(directory) != 'draft':
         directory = abspath(join(directory, '..'))
@@ -137,20 +136,20 @@ def assemble(start_dir, with_yaml = True):
             directory = start_dir
             break
 
-    draft_files = list_files(directory)
-    return _join_files(draft_files, with_yaml)
+    draft_files = _build_draft_contents(directory)
+    return _prepare_and_join_manuscript(draft_files, with_yaml)
 
 
-def assemble_zip(url, with_yaml = True):
-    draft_files = list_zip_files(url)
-    return _join_files(draft_files, with_yaml)
+def assemble_zip(url, with_yaml=True):
+    draft_files = _get_zipfile_contents(url)
+    return _prepare_and_join_manuscript(draft_files, with_yaml)
 
 
 if __name__ == '__main__':
     if len(sys.argv) < 2:
         sys.exit('Usage: %s <directory|url>' % sys.argv[0])
     if sys.argv[1].startswith('https://'):
-        (title, manuscript) = assemble_zip(sys.argv[1])
+        (title, story) = assemble_zip(sys.argv[1])
     else:
-        (title, manuscript) = assemble(abspath(sys.argv[1]))
-    print manuscript.encode('utf-8')
+        (title, story) = assemble(abspath(sys.argv[1]))
+    print story.encode('utf-8')
