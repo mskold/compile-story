@@ -26,10 +26,10 @@ def _join_manuscript(data, metadata, chapter_names):
     global chapter_index
     manuscript = ''
     first_scene = True
-    for key, content in data.items():
-        if key.startswith('PART:'):
+    for filename, content in data.items():
+        if filename.startswith('PART:'):
             # Append all data in part
-            manuscript += '\n\n## %s\n\n' % key.split('-')[1]
+            manuscript += '\n\n## %s\n\n' % filename.split('-')[1]
             manuscript += _join_manuscript(content, metadata, chapter_names)
         else:
             if content.startswith('#'):
@@ -44,31 +44,7 @@ def _join_manuscript(data, metadata, chapter_names):
     return manuscript
 
 
-def _prepare_and_join_manuscript(draft_data, with_yaml):
-    metadata = _parse_metadata(draft_data.get('00-metadata.md'))
-    if '00-metadata.md' in draft_data:
-        del draft_data['00-metadata.md']
-
-    chapters = []
-
-    # Join all scenes/chapters
-    if metadata.get('storytype', '').lower() == 'Novel'.lower():
-        if draft_data.pop('parts', False):
-            # Count chapters
-            numchaps = 0
-            for key, possible_part in draft_data.items():
-                if key.startswith('PART:'):
-                    numchaps += len(draft_data[key])
-                else:
-                    numchaps += 1
-            chapters = ['\n\n### %s %d\n\n' % (metadata.get('chapterprefix', ''), n) for n in range(1, numchaps+1)]
-            global chapter_index
-            chapter_index = 0
-        else:
-            chapters = ['\n\n### %s %d\n\n' % (metadata.get('chapterprefix', ''), n) for n in range(1, len(draft_data)+1)]
-
-    manuscript = _join_manuscript(draft_data, metadata, chapters)
-
+def _cleanup_and_substitutions(manuscript, metadata, with_yaml):
     if with_yaml:
         yaml_section = '---\n'
         for key, value in metadata.items():
@@ -76,9 +52,7 @@ def _prepare_and_join_manuscript(draft_data, with_yaml):
         yaml_section += '---\n\n'
     else:
         yaml_section = '# %s\n\n## av %s\n\n' % (metadata.get('title', 'Utan titel'), metadata.get('author', 'Okänd'))
-
     manuscript = yaml_section + manuscript
-
     if 'revision' in metadata:
         storytitle = '%s_%s' % (metadata.get('title', 'draft'), metadata.get('revision'))
     else:
@@ -93,7 +67,28 @@ def _prepare_and_join_manuscript(draft_data, with_yaml):
     else:
         manuscript = manuscript.replace(' -- ', u'—')
     manuscript = re.sub(' +', u' ', manuscript)
-    return storytitle, manuscript
+    return manuscript, storytitle
+
+
+def _get_chapters(draft_data, metadata):
+    chapters = []
+
+    if metadata.get('storytype', '').lower() == 'Novel'.lower():
+        if draft_data.pop('parts', False):
+            # Count chapters
+            numchaps = 0
+            for key, possible_part in draft_data.items():
+                if key.startswith('PART:'):
+                    numchaps += len(draft_data[key])
+                else:
+                    numchaps += 1
+            chapters = ['\n\n### %s %d\n\n' % (metadata.get('chapterprefix', ''), n) for n in range(1, numchaps + 1)]
+            global chapter_index
+            chapter_index = 0
+        else:
+            chapters = ['\n\n### %s %d\n\n' % (metadata.get('chapterprefix', ''), n) for n in
+                        range(1, len(draft_data) + 1)]
+    return chapters
 
 
 def _build_draft_contents(directory):
@@ -107,6 +102,16 @@ def _build_draft_contents(directory):
                 draft_data['PART:'+basename(f).decode('utf-8')] = _build_draft_contents(join(directory, f))
                 draft_data['parts'] = True
     return draft_data
+
+
+def _prepare_and_join_manuscript(draft_data, with_yaml):
+    metadata = _parse_metadata(draft_data.get('00-metadata.md'))
+    if '00-metadata.md' in draft_data:
+        del draft_data['00-metadata.md']
+    chapters = _get_chapters(draft_data, metadata)
+    manuscript = _join_manuscript(draft_data, metadata, chapters)
+    manuscript, storytitle = _cleanup_and_substitutions(manuscript, metadata, with_yaml)
+    return storytitle, manuscript
 
 
 def _get_zipfile_contents(url):
