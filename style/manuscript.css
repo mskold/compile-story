@@ -66,6 +66,8 @@ h5 {
     height: auto;
 }
 
+q { quotes: "”" "”" "’" "’"; }
+
 blockquote p {
     margin-top: 0.5em;
     text-indent: 0;

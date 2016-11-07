@@ -1,6 +1,20 @@
 #!/usr/bin/env bash
 
+BASE_OUTPUT_DIR="/Users/markus/Dropbox/Skrivande/_kompilerat/"
+
+
+#if [[ -t 0 ]]; then
+    # Running with filename as argument
 MARKDOWN_DRAFT="$1"
+STORY_NAME="$(basename "$1" .md)"
+#else
+#    # Running through a pipe, write markdown draft to /tmp/markdown_draft.md
+#    echo "" > /tmp/markdown_draft.md
+#    while read line; do
+#        echo "${line}" >> /tmp/markdown_draft.md
+#    done < /dev/stdin
+#    MARKDOWN_DRAFT="/tmp/markdown_draft.md"
+#fi
 
 if [ ! -f "$MARKDOWN_DRAFT" ]; then
     echo "Draft file \"${MARKDOWN_DRAFT}\" does not exist."
@@ -15,9 +29,11 @@ CSS=$(realpath `dirname "$0"`"/style/manuscript.css")
 DOCXREF=$(realpath `dirname "$0"`"/style/reference.docx")
 ODTREF=$(realpath `dirname "$0"`"/style/reference.odt")
 
-OUTPUT_DIR=$(realpath `dirname "$MARKDOWN_DRAFT"`)
+#OUTPUT_DIR=$(realpath `dirname "$MARKDOWN_DRAFT"`)
+OUTPUT_DIR="${BASE_OUTPUT_DIR}/${STORY_NAME}"
 
 echo "OUTPUT_DIR: $OUTPUT_DIR"
+mkdir -p "${OUTPUT_DIR}"
 
 PANDOC="pandoc"
 WKHTML2PDF="wkhtmltopdf"
