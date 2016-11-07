@@ -57,5 +57,5 @@ if __name__ == '__main__':
         markdown = quotes_and_dashes(markdown)
 
     if args.output:
-        print(markdown)
+        print(markdown.encode('utf-8'))
 
