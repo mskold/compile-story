@@ -52,9 +52,6 @@ if __name__ == '__main__':
 
     args = parser.parse_args()
 
-    print("%s %s" % (args.tempdir, type(args.tempdir)))
-    exit(0)
-
     with io.open(args.manuscript, 'r', encoding='utf8') as f:
         markdown = f.read()
 
