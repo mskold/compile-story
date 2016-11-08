@@ -3,7 +3,7 @@
 # 
 
 import argparse
-import sys, re, io, os
+import sys, re, io, os, time
 
 
 def quotes_and_dashes(manuscript):
@@ -21,9 +21,9 @@ def renumber_chapters(draft):
             m = re.match('### \d+ (.+)', line)
             if m:
                 # Preserve extra text after number
-                manuscript.append('### %d %s\n' % (chapter_index, m.group(1)))
+                manuscript.append('### %d %s' % (chapter_index, m.group(1)))
             else:
-                manuscript.append('### %d\n' % chapter_index)
+                manuscript.append('### %d' % chapter_index)
             chapter_index += 1
         else:
             manuscript.append(line)
@@ -47,10 +47,13 @@ if __name__ == '__main__':
     parser.add_argument('-f', '--reformat', action='store_true', help='Replace quotes and dashes')
     parser.add_argument('-r', '--renumber', action='store_true', help='Renumber the chapters')
     parser.add_argument('-y', '--remove_yaml', action='store_true', help='Remove YAML section')
-    parser.add_argument('-t', '--tempdir', metavar='tmpdir', nargs=1, default='/tmp', help='Specify temporary directory, used for backup (defaults to /tmp')
+    parser.add_argument('-t', '--tempdir', metavar='tmpdir', default='/tmp', help='Specify temporary directory, used for backup (defaults to /tmp')
     parser.add_argument('-o', '--output', action='store_true', help='Return manuscript as output.')
 
     args = parser.parse_args()
+
+    print("%s %s" % (args.tempdir, type(args.tempdir)))
+    exit(0)
 
     with io.open(args.manuscript, 'r', encoding='utf8') as f:
         markdown = f.read()
@@ -58,10 +61,11 @@ if __name__ == '__main__':
     if args.renumber:
         markdown = renumber_chapters(markdown)
         if args.tempdir:
-            tmpfilename = os.path.join(args.tempdir, os.path.basename(args.manuscript))
+            basefname = os.path.splitext(os.path.basename(args.manuscript))[0]
+            tmpfilename = os.path.join(args.tempdir, "%s-%s.md" % (basefname, time.time()))
             os.rename(args.manuscript, tmpfilename)
             with open(args.manuscript, 'w') as o:
-                o.write(markdown)
+                o.write(markdown.encode('utf-8'))
         if not args.output:
             print("Chapters renumberered, original saved as %s" % tmpfilename)
 
