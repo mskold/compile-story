@@ -21,7 +21,7 @@ h1, h2
     text-indent:0;
     margin-top:0;
 }
-h2+h1,p+h1 {
+p+h1 {
     page-break-before: always;
     margin-bottom:3em;
     margin-top:8em;
