@@ -1,0 +1,119 @@
+p
+{
+    text-indent:1em;
+    margin-top:0;
+    margin-bottom:0;
+    /*
+    font-size: 12pt;
+    line-height: 200%;
+    */
+    font-family: "serif", "Times New Roman", "TimesNewRoman", "Times";
+}
+h1
+{
+    /*
+    font-size: 18pt;
+    */
+    font-size: 150%;
+}
+h2
+{
+    font-size: 120%;
+}
+h1, h2
+{
+    text-align:center;
+    text-indent:0;
+    margin-top:0;
+}
+h2+h1,p+h1 {
+    page-break-before: always;
+    margin-bottom:3em;
+    margin-top:8em;
+}
+p+h2 {
+    page-break-before: always;
+    margin-bottom:3em;
+    margin-top:8em;
+
+}
+h3
+{
+    text-align: center;
+    text-indent: 0;
+    margin-top: 0;
+}
+p+h3
+{
+    page-break-before: always;
+}
+/*
+.author:before {
+    content: "av ";
+}
+*/
+.title {
+    text-transform: uppercase;
+}
+
+A:link
+{
+    color:#0000ff;
+}
+
+hr {
+    margin-top: 3em;
+    border: none;
+}
+
+h4 {
+    margin-top: 1em;
+    text-align: center;
+}
+
+h5 {
+    text-align: center;
+    height: 1em;
+}
+
+#wrapper img {
+    max-width: 100%;
+    height: auto;
+}
+
+blockquote p {
+    margin-top: 0.5em;
+    text-indent: 0;
+    font-style: italic; 
+}
+
+blockquote+p {
+    margin: 0;
+    text-indent: 0;
+}
+
+h1+p, h2+p {
+    margin: 0;
+    margin-top: 4em;
+    text-indent: 0;
+}
+
+h3+p, h4+p, h5+p, div+p {
+    margin: 0;
+    text-indent: 0;
+}
+
+p.newpage {
+    page-break-before: always;
+}
+/* Cover image hack */
+#cover {
+    margin: 0; padding: 0;
+    margin-right: -3px;
+}
+#cover-image {
+    text-align: center;
+}
+#cover-image img {
+    max-width: 100%; height: 98%;
+}
