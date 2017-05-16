@@ -37,20 +37,18 @@ $for(creator)$
   <h2 class="$creator.role$">$creator.text$</h2>
 $endfor$
 <p class="newpage"/>
+$if(rights)$
+  <div class="rights">$rights$</div>
+  <div>&nbsp;</div>
+$endif$
+$if(publisher)$
+  <div class="publisher">Utgiven av $publisher$</div>
+$endif$
 $if(edition)$
   <div class="edition">$edition$</div>
 $endif$
-$if(date)$
-  <div class="date">Utgiven $date$</div>
-$endif$
-$if(publisher)$
-  <div class="publisher">$publisher$</div>
-$endif$
-$if(rights)$
-  <div class="rights">$rights$</div>
-$endif$
-<p/>
 $if(coverdesign)$
+  <div>&nbsp;</div>
   <div class="coverdesign">Formgivning omslag: $coverdesign$</div>
 $endif$
 $if(isbn)$

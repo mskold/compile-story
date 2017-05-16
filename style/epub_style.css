@@ -72,8 +72,9 @@ h4 {
 }
 
 h5 {
-    text-align: center;
-    height: 1em;
+    margin-top: 1em;
+    text-align: right;
+    font-size: 100%;
 }
 
 #wrapper img {
